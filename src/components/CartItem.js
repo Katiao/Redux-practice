@@ -40,7 +40,7 @@ const CartItem = ({ img, title, price, amount, remove, toggle }) => {
 };
 //ownProps allows you to have access to props that this component has access to and to send it to the reducer
 const mapDispatchToProps = (dispatch, ownProps) => {
-  const { id, amount } = ownProps;
+  const { id } = ownProps;
   return {
     remove: () => dispatch({ type: REMOVE, payload: { id } }),
     /*  increase: () => dispatch({ type: INCREASE, payload: { id } }),
