@@ -1,4 +1,4 @@
-import { DECREASE, INCREASE, CLEAR_CART, REMOVE, GET_TOTALS } from "./actions";
+import { CLEAR_CART, REMOVE, GET_TOTALS, TOGGLE_AMOUNT } from "./actions";
 import cartItems from "./cart-items";
 
 function reducer(state, action) {
@@ -6,7 +6,8 @@ function reducer(state, action) {
     return { ...state, cart: [] };
   }
 
-  if (action.type === DECREASE) {
+  //below code refactored using toggle amount action:
+  /*  if (action.type === DECREASE) {
     let tempCart = state.cart.map((cartItem) => {
       if (cartItem.id === action.payload.id) {
         cartItem = { ...cartItem, amount: cartItem.amount - 1 };
@@ -15,9 +16,9 @@ function reducer(state, action) {
     });
 
     return { ...state, cart: tempCart };
-  }
+  } */
 
-  if (action.type === INCREASE) {
+  /*  if (action.type === INCREASE) {
     let tempCart = state.cart.map((cartItem) => {
       if (cartItem.id === action.payload.id) {
         cartItem = { ...cartItem, amount: cartItem.amount + 1 };
@@ -25,7 +26,7 @@ function reducer(state, action) {
       return cartItem;
     });
     return { ...state, cart: tempCart };
-  }
+  } */
   if (action.type === REMOVE) {
     return {
       ...state,
@@ -50,6 +51,23 @@ function reducer(state, action) {
     );
     total = parseFloat(total.toFixed(2));
     return { ...state, total, amount };
+  }
+
+  if (action.type === TOGGLE_AMOUNT) {
+    return {
+      ...state,
+      cart: state.cart.map((cartItem) => {
+        if (cartItem.id === action.payload.id) {
+          if (action.payload.toggle === "inc") {
+            return (cartItem = { ...cartItem, amount: cartItem.amount + 1 });
+          }
+          if (action.payload.toggle === "dec") {
+            return (cartItem = { ...cartItem, amount: cartItem.amount - 1 });
+          }
+        }
+        return cartItem;
+      }),
+    };
   }
   return state;
 }
