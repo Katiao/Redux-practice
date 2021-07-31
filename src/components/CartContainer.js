@@ -1,11 +1,16 @@
 import React from "react";
 import CartItem from "./CartItem";
-import { connect } from "react-redux"
-import { CLEAR_CART } from "../actions";
+import { connect } from "react-redux";
+import { CLEAR_CART, GET_TOTALS } from "../actions";
 
 //using empty array as a default value here because we're checking for length so
 //we'LL always want it to be at least an empty array.
 const CartContainer = ({ cart = [], total, dispatch }) => {
+  //each time something changes in props, we rerender, we run useEffect and dispatch our get totals and calculate our totals:
+  React.useEffect(() => {
+    dispatch({ type: GET_TOTALS });
+  });
+
   if (cart.length === 0) {
     return (
       <section className="cart">
@@ -25,7 +30,7 @@ const CartContainer = ({ cart = [], total, dispatch }) => {
       </header>
       {/* cart items */}
       <article>
-        {cart.map(item => {
+        {cart.map((item) => {
           return <CartItem key={item.id} {...item} />;
         })}
       </article>
@@ -37,15 +42,21 @@ const CartContainer = ({ cart = [], total, dispatch }) => {
             total <span>${total}</span>
           </h4>
         </div>
-        <button className="btn clear-btn" onClick={() => dispatch({type:CLEAR_CART})}> clear cart</button>
+        <button
+          className="btn clear-btn"
+          onClick={() => dispatch({ type: CLEAR_CART })}
+        >
+          {" "}
+          clear cart
+        </button>
       </footer>
     </section>
   );
 };
 
 function mapStateToProps(store) {
-  const {cart, total} = store
-return {cart, total }
+  const { cart, total } = store;
+  return { cart, total };
 }
 
-export default connect(mapStateToProps) (CartContainer);
+export default connect(mapStateToProps)(CartContainer);

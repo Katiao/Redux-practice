@@ -1,4 +1,4 @@
-import { DECREASE, INCREASE, CLEAR_CART, REMOVE } from "./actions";
+import { DECREASE, INCREASE, CLEAR_CART, REMOVE, GET_TOTALS } from "./actions";
 import cartItems from "./cart-items";
 
 function reducer(state, action) {
@@ -7,20 +7,13 @@ function reducer(state, action) {
   }
 
   if (action.type === DECREASE) {
-    let tempCart = [];
-    //if the amount we are receiving is 1 and we try to decrease it, we remove that item:
-    if (action.payload.amount === 1) {
-      tempCart = state.cart.filter(
-        (cartItem) => cartItem.id !== action.payload.id
-      );
-    } else {
-      tempCart = state.cart.map((cartItem) => {
-        if (cartItem.id === action.payload.id) {
-          cartItem = { ...cartItem, amount: cartItem.amount - 1 };
-        }
-        return cartItem;
-      });
-    }
+    let tempCart = state.cart.map((cartItem) => {
+      if (cartItem.id === action.payload.id) {
+        cartItem = { ...cartItem, amount: cartItem.amount - 1 };
+      }
+      return cartItem;
+    });
+
     return { ...state, cart: tempCart };
   }
 
@@ -38,6 +31,25 @@ function reducer(state, action) {
       ...state,
       cart: state.cart.filter((cartItem) => cartItem.id !== action.payload.id),
     };
+  }
+  if (action.type === GET_TOTALS) {
+    //destructure two variables out of object returned from reduce function
+    //with reduce we can return anything we want: here we return an object with two properties
+    let { total, amount } = state.cart.reduce(
+      (cartTotal, cartItem) => {
+        const { price, amount } = cartItem;
+        const itemTotal = price * amount;
+        cartTotal.amount += amount;
+        cartTotal.total += itemTotal;
+        return cartTotal;
+      },
+      {
+        total: 0,
+        amount: 0,
+      }
+    );
+    total = parseFloat(total.toFixed(2));
+    return { ...state, total, amount };
   }
   return state;
 }
